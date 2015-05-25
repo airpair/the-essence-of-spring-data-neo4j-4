@@ -50,6 +50,9 @@ Specify the snapshot repository as well
 Nodes are modelled as simple POJO's with a few Spring Data Neo4j annotations; [Category](https://github.com/luanne/flavorwocky/blob/sdn/src/main/java/com/flavorwocky/domain/Category.java) is the simplest.
 
 ```java
+import org.neo4j.ogm.annotation.GraphId;
+import org.neo4j.ogm.annotation.NodeEntity;
+
 @NodeEntity
 public class Category {
 
@@ -80,6 +83,9 @@ Note the following-
 Next, the [Ingredient](https://github.com/luanne/flavorwocky/blob/sdn/src/main/java/com/flavorwocky/domain/Ingredient.java).
 
 ```java
+import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Relationship;
+
 @NodeEntity
 public class Ingredient {
 
@@ -136,6 +142,10 @@ This relationship is now modelled in our domain as a Relationship Entity, [Pairi
 
 
 ```java
+import org.neo4j.ogm.annotation.EndNode;
+import org.neo4j.ogm.annotation.RelationshipEntity;
+import org.neo4j.ogm.annotation.StartNode;
+
 @RelationshipEntity(type = "PAIRS_WITH")
 public class Pairing {
 
@@ -166,6 +176,9 @@ Note that when we add a Pairing via the `addPairing` method, we make sure that w
 Representing a [LatestPairing](https://github.com/luanne/flavorwocky/blob/sdn/src/main/java/com/flavorwocky/domain/LatestPairing.java) is easy enough.
 
 ```java
+import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.typeconversion.DateLong;
+
 @NodeEntity
 public class LatestPairing {
 
@@ -227,6 +240,10 @@ We do not require any additional functionality for LatestPairings, the save and 
 However, the IngredientRepository is a little more involved.
 
 ```java
+import org.springframework.data.neo4j.annotation.Query;
+import org.springframework.data.neo4j.repository.GraphRepository;
+import org.springframework.stereotype.Repository;
+
 @Repository
 public interface IngredientRepository extends GraphRepository<Ingredient> {
 
@@ -334,6 +351,18 @@ Now for the Spring configuration. Spring Data Neo4j 4 currently supports only Ja
 [Application.java](https://github.com/luanne/flavorwocky/blob/sdn/src/main/java/com/flavorwocky/Application.java) shows how it's done.
 
 ```java
+import org.neo4j.ogm.session.Session;
+import org.neo4j.ogm.session.SessionFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.*;
+import org.springframework.data.neo4j.config.Neo4jConfiguration;
+import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
+import org.springframework.data.neo4j.server.Neo4jServer;
+import org.springframework.data.neo4j.server.RemoteServer;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+
 @Configuration
 @ComponentScan("com.flavorwocky")
 @EnableAutoConfiguration
