@@ -19,7 +19,7 @@ Here's what it looks like:
 
 <img src="https://photos-5.dropbox.com/t/2/AAAwwIUbjYC-vC0tIdc-1GQJkJdvzpPLvHiYMD82xpPrIA/12/15330610/png/32x32/1/1432584000/0/2/air-graph-model.png/CLLapwcgASACIAMgBCAFIAYoASgC/j9jQjy2DTU-YM7Aobtc1Nbz1LcMVhOo0ULnO4qY-5vw?size=1024x768&size_mode=2">
 
-An Ingredient has a single relationship `HAS_CATEGORY` to a Category node. It also has potentially many `PAIRS_WITH` relationships to other Ingredients.
+An Ingredient has a single relationship `HAS_CATEGORY` to a Category node. It also has potentially many `PAIRS_WITH` relationships to other Ingredients. Some flavor combinations work well but there are some "classic" ones that you can't go wrong with. We'll be capturing the degree of affinity between a pair of ingredients as a property on the `PAIRS_WITH` relationship.
 
 Flavorwocky keeps track of the last few pairings added to the graph. For simplicity, we're going to track this with another kind of node labelled `LatestPairing`. These nodes have no relations to any others. Better change tracking can be achieved by using something like the [GraphAware ChangeFeed Module](http://graphaware.com/neo4j/2014/08/27/graphaware-neo4j-changefeed.html) but that is outside the scope of this article.
 
@@ -115,7 +115,8 @@ public class Ingredient {
 
 ```
 
-Again, this entity is backed by a Node, indicated by the `@NodeEntity`. The `Long id` serves as the node id.
+Again, this entity is backed by a Node, indicated by the `@NodeEntity`. 
+
 An ingredient has a relationship to a category, indicated here as
 ```java
 @Relationship(type = "HAS_CATEGORY", direction = "OUTGOING")
@@ -124,7 +125,7 @@ private Category category;
 
 This tells Spring Data Neo4j three things - 
 
-* A relationship is to be maintained between the Ingredient and Category nodes
+* A relationship is to be maintained between the Ingredient and Category nodes. This relationship has no properties qualifying it and serves to simply connect two nodes in the graph
 * The relationship type is called `HAS_CATEGORY`
 * The direction of the relation is outgoing from the Ingredient to the Category
 
@@ -136,9 +137,9 @@ The second relationship, `PAIRS_WITH` is a special kind of relationship because 
 @Relationship(type = "PAIRS_WITH", direction = "UNDIRECTED")
 private Set<Pairing> pairings = new HashSet<>();
 ```
-Neo4j is a labelled property graph, so both nodes and relationships can have properties. We want to store the affinity between two ingredients as a property on the `PAIRS_WITH` relationship. We also do not care about the direction of the `PAIRS_WITH` relationship between two ingredient nodes, so the direction specified is `UNDIRECTED`, which means it can be traversed from either direction. 
+Remember we want to store the affinity between two ingredients as a property on the `PAIRS_WITH` relationship. We also do not care about the direction of the `PAIRS_WITH` relationship between two ingredient nodes, so the direction specified is `UNDIRECTED`, which means it can be traversed from either direction. 
 
-This relationship is now modelled in our domain as a Relationship Entity, [Pairing](https://github.com/luanne/flavorwocky/blob/sdn/src/main/java/com/flavorwocky/domain/Pairing.java).
+Since we have the affinity property qualifying this relationship between two ingredients, it has to be modelled in our domain as a Relationship Entity, [Pairing](https://github.com/luanne/flavorwocky/blob/sdn/src/main/java/com/flavorwocky/domain/Pairing.java).
 
 
 ```java
@@ -167,7 +168,6 @@ public class Pairing {
 
 The `@RelationshipEntity` annotation is mandatory along with the relationship type. Also note that the relationship type `PAIRS_WITH` is mandatory on the `pairings` field in the Ingredient class, since it represents a relationship entity.
 Also mandatory are the `@StartNode` and `@EndNode` indicating the start and end nodes of the relationship. 
-As usual, we require a `Long id` which serves as the relationship id.
 Apart from this, we can define as many properties as we like.
 
 Note that when we add a Pairing via the `addPairing` method, we make sure that we set it on both ingredients comprising the pair. This ensures we can navigate from both ends of the relationship and hence save either entity correctly.
@@ -195,10 +195,6 @@ public class LatestPairing {
     //Getters and setters
 }
 ```
-
-### Transient entities
-
-If you have objects which are not to be persisted to the graph, annotate them with `@Transient`. This annotation applies to both classes and fields. 
 
 ## Converters
 Neo4j supports the following types of property values- numeric, boolean, String and arrays of them.
@@ -391,7 +387,7 @@ public class Application extends Neo4jConfiguration {
 First, your class must extend `Neo4jConfiguration`.
 Specify where your repositories are located in the `@EnableNeo4jRepositories` annotation. 
 
-The database URL is provided to the `RemoteServer` in the overridden `neo4jServer()` mthod.
+The database URL is provided to the `RemoteServer` in the overridden `neo4jServer()` method.
 The other variation of the `Neo4jServer` is an `InProcessServer` useful for testing.
 
 The `SessionFactory` creates instances of `org.neo4j.ogm.session.Session` as required and sets up the object-graph mapping metadata when constructed. Provide the packages containing domain objects to the constructor of the `SessionFactory`.
