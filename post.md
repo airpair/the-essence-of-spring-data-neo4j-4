@@ -455,7 +455,16 @@ public class DomainTest {
 	}
 }
 ```
-That's how easy it is to build an application using Spring Data Neo4j!
+
+## What next?
+
+Flavorwocky was built in a day! 
+
+With the concepts introduced in this article you're ready to write your own application and focus on business logic instead of scaffolding. 
+Upgrading your existing domain model to use the non intrusive Spring Data Neo4j 4 is equally straightforward. 
+
+Watch out for the RC1 and then GA announcements for Spring Data Neo4j 4. 
+I hope you have as much fun using it as we did while writing it!
 
 ## Further Reading
 
