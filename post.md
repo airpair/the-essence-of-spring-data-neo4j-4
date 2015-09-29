@@ -24,25 +24,17 @@ An Ingredient has a single relationship `HAS_CATEGORY` to a Category node. It al
 Flavorwocky keeps track of the last few pairings added to the graph. For simplicity, we're going to track this with another kind of node labelled `LatestPairing`. These nodes have no relations to any others. Better change tracking can be achieved by using something like the [GraphAware ChangeFeed Module](http://graphaware.com/neo4j/2014/08/27/graphaware-neo4j-changefeed.html) but that is outside the scope of this article.
 
 ## Setting up
-Spring Data Neo4j 4 Milestone 1 was released in March 2015. RC1 is due to be released in the last week of May and contains a considerable amount of improvements and fixes. The dependencies included here will use the latest snapshot build so that we can use all these new features.
+Spring Data Neo4j 4 GA was released in September 2015. The dependencies included here will use the 4.0 GA build.
 
 Include the following dependency for Spring Data Neo4j 4 in your project.
 ```xml
 <dependency>
     <groupId>org.springframework.data</groupId>
     <artifactId>spring-data-neo4j</artifactId>
-    <version>4.0.0.BUILD-SNAPSHOT</version>
+    <version>4.0.0.RELEASE</version>
 </dependency>
 ```
-Specify the snapshot repository as well
 
-```xml
-<repository>
-    <id>spring-libs-snapshot</id>
-    <name>Spring</name>
-    <url>http://repo.spring.io/libs-snapshot</url>
-</repository>
-```
 ## Domain Model
 
 ### NodeEntities, Relationships and RelationshipEntities
@@ -401,10 +393,10 @@ Writing tests is fairly straightforward.
 Include the following dependencies
 
 ```xml
- <dependency>
+<dependency>
     <groupId>org.springframework.data</groupId>
     <artifactId>spring-data-neo4j</artifactId>
-    <version>4.0.0.BUILD-SNAPSHOT</version>
+    <version>${sdn.version}</version>
     <type>test-jar</type>
 </dependency>
 
@@ -414,18 +406,27 @@ Include the following dependencies
     <version>${neo4j.version}</version>
     <type>test-jar</type>
 </dependency>
-
+  
 <dependency>
     <groupId>org.neo4j.app</groupId>
     <artifactId>neo4j-server</artifactId>
     <version>${neo4j.version}</version>
     <type>test-jar</type>
 </dependency>
- <dependency>
+
+<dependency>
     <groupId>org.neo4j</groupId>
-    <artifactId>neo4j-io</artifactId>
-    <version>${neo4j.version}</version>
+    <artifactId>neo4j-ogm</artifactId>
+    <version>${neo4j-ogm.version}</version>
     <type>test-jar</type>
+    <scope>test</scope>
+</dependency>
+
+<dependency>
+    <groupId>org.neo4j.test</groupId>
+    <artifactId>neo4j-harness</artifactId>
+    <version>${neo4j.version}</version>
+    <scope>test</scope>
 </dependency>
 ```
 [PersistenceContext.java](https://github.com/luanne/flavorwocky/blob/sdn/src/test/java/com/flavorwocky/context/PersistenceContext.java) sets up the Spring configuration for tests. It is essentially the same as the one we saw earlier, except that it uses an `InProcessServer`. This starts a new instance of `CommunityNeoServer` running on an available local port and returns the URL needed to connect to it.
@@ -463,14 +464,11 @@ Flavorwocky was built in a day!
 With the concepts introduced in this article you're ready to write your own application and focus on business logic instead of scaffolding. 
 Upgrading your existing domain model to use the non intrusive Spring Data Neo4j 4 is equally straightforward. 
 
-Watch out for the RC1 and then GA announcements for Spring Data Neo4j 4. 
 I hope you have as much fun using it as we did while writing it!
 
 ## Further Reading
 
-Milestone 1 of Spring Data Neo4j has been released, and the documentation is available at http://docs.spring.io/spring-data/neo4j/docs/4.0.0.M1
-
-RC1 is scheduled to be released in the last week of May 2015, the documentation will be published to http://docs.spring.io/spring-data/neo4j/docs/4.0.0.RC1
+The documentation for 4.0 GA is available at http://docs.spring.io/spring-data/neo4j/docs/4.0.0.RELEASE/reference/html
 
 The source code for Flavorwocky is available at https://github.com/luanne/flavorwocky/tree/sdn
 Instructions on running this locally are documented in the [README](https://github.com/luanne/flavorwocky/blob/sdn/README.md).
