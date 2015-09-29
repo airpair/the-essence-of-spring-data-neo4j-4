@@ -9,7 +9,7 @@ With ACID guarantees and the ability to scale to billions of nodes and relations
 
 [Spring Data Neo4j](http://projects.spring.io/spring-data-neo4j/) is part of the Spring Data initiative and simplifies development using annotations on simple POJO domain objects, much like JPA.
 
-Spring Data Neo4j 4 supports Neo4j deployments in standalone server mode and has been rewritten from scratch by [GraphAware](http://graphaware.com), sponsored by [Neo Technology](http://neo4j.com/).
+Spring Data Neo4j 4 supports Neo4j deployments in standalone server mode and has been rewritten from scratch by [GraphAware](http://graphaware.com/spring-data-neo4j), sponsored by [Neo Technology](http://neo4j.com/).
 
 ## Getting Started - The Graph Model
 Before we write any code, we're going to model our domain as a graph. Flavorwocky is a very simple domain, perfect for this guide.
